@@ -1,0 +1,96 @@
+<html>
+    <head>
+        <script>
+            window.addEventListener( "load", main );
+
+            function main( )
+            {
+                var spam_button = document.getElementById( "spam" );
+                spam_button.addEventListener( "click", spam );
+
+                //var timer = window.setInterval( post, 1000 );
+                var post_button = document.getElementById( "post" );
+                post_button.addEventListener( "click", post );
+            }
+
+function spam( )
+{
+    var video = document.getElementById( "video" ).value;
+    var list = document.getElementById( "queue" );
+    var item = document.createElement( "li" );
+    var text = document.createTextNode( video );
+    item.appendChild( text );
+    list.appendChild( item );
+}
+
+function post( )
+{
+    var lanager_url = document.getElementById( "lanager_url" ).value;
+    var lanager_cookie = document.getElementById( "lanager_cookie" ).value;
+    var token = document.getElementById( "token" ).value;
+    var url = lanager_url + "/playlists/1/items";
+
+    var q = document.getElementById( "queue" ).children;
+    if( q.length > 0 )
+    {
+        var video = q[0].firstChild.data;
+
+        var data = new FormData( );
+        data.append( "_token", token );
+        data.append( "url", video );
+
+        var xhr = new XMLHttpRequest( );
+        xhr.open( "POST", url, false );
+
+        /* We're not allowed to set either of the below headers.
+         *   TODO does --disable-web-security change this?
+         * I don't think this actually matters:
+         * - Referer just seems to be used to know where to send you back to (assuming a form submit, not a background AJAX request), so leaving it along will just result in a 302 back to here, which will never be fetched)
+         * - Cookie should be set by the browser if you're logged in in another window
+         * Apparently there is a xhr.setDisableHeaderCheck(true) function, but chrome complains
+         * xhr.setRequestHeader( "Referer", url );
+         * xhr.setRequestHeader( "Cookie", "lanager=" + lanager_cookie );
+         */
+
+        /* An XHR to a different origin isn't allowed (for obvious reasons),
+         * unless the other end sets Access-Control-Allow-Origin in ints
+         * response. Lanager doesn't.
+         * Run chrome with --disable-web-security
+         */
+
+        /* TODO
+         * - should be async
+         * - keep state
+         * - skip this request if the previous one is still in flight
+         * - canel prev requests if they've been in flight for 10 ticks or something
+         * - log success / error to a ul
+         * - expect 302
+         */
+        alert( xhr.send( data ) );
+    }
+}
+        </script>
+    </head>
+    <body>
+        <h1>Spamager / HTML</h1>
+        <p>You need to disable CORS etc.
+        <ul>
+            <li>Chrome: run with --disable-web-secutiry</li>
+        </ul>
+        </p>
+        <h2>Lanager</h2>
+        <p>
+        URL:&nbsp;<input type="text" id="lanager_url" value="http://empty.org.uk:12345" /><br />
+        Cookie:&nbsp;<input type="text" id="lanager_cookie" value="Please log in in another tab" disabled /><br />
+        Token:&nbsp;<input type="text" id="token" value="token" />
+        </p>
+
+        <h2>Add New</h2>
+        <input type="text" id="video" />
+        <input type="button" id="spam" value="spam" />
+
+        <h2>Queue</h2>
+        <ol id="queue"></ol>
+        <input type="button" id="post" value="post" />
+    </body>
+</html>
