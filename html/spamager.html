@@ -30,10 +30,12 @@ function post( )
     var token = document.getElementById( "token" ).value;
     var url = lanager_url + "/playlists/1/items";
 
-    var q = document.getElementById( "queue" ).children;
-    if( q.length > 0 )
+    var q = document.getElementById( "queue" );
+    var items = q.children;
+    if( items.length > 0 )
     {
-        var video = q[0].firstChild.data;
+        var video = items[0].firstChild.data;
+        q.removeChild( items[0] );
 
         var data = new FormData( );
         data.append( "_token", token );
@@ -65,8 +67,10 @@ function post( )
          * - canel prev requests if they've been in flight for 10 ticks or something
          * - log success / error to a ul
          * - expect 302
+         * - even in sync mode this doesn't return anything
+         * - shouldn't remove from list until successful spam has been confirmed, otherwise the whole retry thing is a bit pointless...
          */
-        alert( xhr.send( data ) );
+        xhr.send( data );
     }
 }
         </script>
