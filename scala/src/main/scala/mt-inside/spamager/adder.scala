@@ -49,7 +49,7 @@ class Adder( lanager_url : String, cookie : String, token : String ) extends Act
       response onComplete {
         case Success(HttpResponse(rc, body, headers, protocol)) =>
           log.info("Spam successful; HTTP code " + rc);
-          println(body.asString);
+          //println(body.asString);
           shutdown();
 
         case Failure(error) =>
