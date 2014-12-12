@@ -1,7 +1,14 @@
 package mt_inside.spamager
 
+import scala.concurrent.duration._
 import akka.actor._
 import akka.event.Logging
+import akka.io.IO
+import akka.pattern.ask
+import akka.util.Timeout
+import spray.can.Http
+
+import htmlview.HtmlView
 
 object Main extends App
 {
@@ -14,5 +21,10 @@ object Main extends App
   val adder = system.actorOf( Props ( new Adder( lanager_url, cookie, token ) ), name = "Adder" );
 
   val video = "https://www.youtube.com/watch?v=dOyJqGtP-wU";
-  adder ! video;
+  //adder ! video;
+
+
+  implicit val timeout = Timeout(5.seconds);
+  val htmlView = system.actorOf( Props[HtmlView], name = "HtmlView" );
+  IO(Http) ? Http.Bind( htmlView, interface = "localhost", port = 8080 );
 }
