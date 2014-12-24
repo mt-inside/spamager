@@ -1,0 +1,19 @@
+@import mt_inside.spamager.model.Video
+@( videos : Seq[Video] )
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+    <h1>Spamager / Scala</h1>
+    <p><i>Because Yami won't troll herself</i></p>
+    <hr />
+
+    <h2>Spam Queue</h2>
+    <ol>
+@for( video <- videos ) {
+        <li>@video.name</li>
+}
+    </ol>
+</body>
+</html>
