@@ -1,5 +1,10 @@
-FROM ubuntu:14.04
+# EXPOSE just opens the container's firewall, port must still be mapped by the operator
+# run as "docker run -d -p $port:80 mtinside/lanager
+
 MAINTAINER Matt Turner <matturner@gmail.com>
+
+# Build instructions
+FROM ubuntu:14.04
 # Uh, this is shit. Use puppet yeah.
 # apt-get install lamp-server?
 RUN apt-get update && apt-get install -y git apache2 php5 php5-curl php5-mcrypt php5-mysql mysql-server curl
@@ -23,6 +28,7 @@ RUN chmod -R 0777 /lanager/vendor/ezyang/htmlpurifier/library/HTMLPurifier/Defin
 RUN chmod 0755 /lanager/SteamImportUserStates.sh
 RUN echo '*/1 * * * * /lanager/SteamImportUserStates.sh >> /dev/null 2>&1' | crontab -
 RUN echo "<?php\nphpinfo();\n?>" > /lanager/public/info.php
+
+# Runtime hints
 EXPOSE 80
-CMD ["/usr/sbin/service", "apache2", "start"]
-CMD ["/usr/sbin/service", "mysql", "start"]
+CMD /usr/sbin/service mysql start && /usr/sbin/apache2ctl -D FOREGROUND -k start
